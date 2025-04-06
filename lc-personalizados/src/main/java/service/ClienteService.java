@@ -29,4 +29,29 @@ public class ClienteService {
         return response;
     }
 
+    public ClienteResponseDTO atualizarCliente(ClienteRequestDTO clienteRequestDTO) {
+        Cliente clienteExistente = repository.findAll()
+                .stream()
+                .filter(c -> c.getCpf().equals(clienteRequestDTO.getCpf()))
+                .findFirst()
+                .orElse(null);
+
+        ClienteResponseDTO response = new ClienteResponseDTO();
+
+        if (clienteExistente == null) {
+            response.setHttpStatus(HttpStatus.NOT_FOUND);
+            response.setMensagem("Cliente não encontrado para o CPF informado.");
+            return response;
+        }
+
+        clienteExistente.setNome(clienteRequestDTO.getNome());
+        clienteExistente.setTelefone(clienteRequestDTO.getTelefone());
+        repository.save(clienteExistente);
+
+        response.setHttpStatus(HttpStatus.OK);
+        response.setMensagem("Cliente atualizado com sucesso");
+        return response;
+    }
+
+
 }
