@@ -20,9 +20,12 @@ public class ClienteController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-    @PutMapping("/atualizar")
-    public ResponseEntity<ClienteResponseDTO> atualizarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO) {
-        ClienteResponseDTO response = clienteService.atualizarCliente(clienteRequestDTO);
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<ClienteResponseDTO> atualizarClientePorId(
+            @PathVariable Long id,
+            @RequestBody ClienteRequestDTO clienteRequestDTO) {
+
+        ClienteResponseDTO response = clienteService.atualizarClientePorId(id, clienteRequestDTO);
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 

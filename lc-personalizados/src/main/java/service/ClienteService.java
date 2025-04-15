@@ -29,22 +29,29 @@ public class ClienteService {
         return response;
     }
 
-    public ClienteResponseDTO atualizarCliente(ClienteRequestDTO clienteRequestDTO) {
-        Cliente clienteExistente = repository.findAll()
-                .stream()
-                .filter(c -> c.getCpf().equals(clienteRequestDTO.getCpf()))
-                .findFirst()
-                .orElse(null);
 
+    public ClienteResponseDTO atualizarClientePorId(Long id, ClienteRequestDTO clienteRequestDTO) {
+        Cliente clienteExistente = repository.findById(id).orElse(null);
         ClienteResponseDTO response = new ClienteResponseDTO();
 
         if (clienteExistente == null) {
             response.setHttpStatus(HttpStatus.NOT_FOUND);
-            response.setMensagem("Cliente não encontrado para o CPF informado.");
+            response.setMensagem("Cliente com ID " + id + " não encontrado.");
+            return response;
+        }
+
+        boolean cpfJaExiste = repository.findAll()
+                .stream()
+                .anyMatch(c -> !c.getId().equals(id) && c.getCpf().equals(clienteRequestDTO.getCpf()));
+
+        if (cpfJaExiste) {
+            response.setHttpStatus(HttpStatus.BAD_REQUEST);
+            response.setMensagem("Já existe outro cliente cadastrado com esse CPF.");
             return response;
         }
 
         clienteExistente.setNome(clienteRequestDTO.getNome());
+        clienteExistente.setCpf(clienteRequestDTO.getCpf());
         clienteExistente.setTelefone(clienteRequestDTO.getTelefone());
         repository.save(clienteExistente);
 
@@ -52,6 +59,7 @@ public class ClienteService {
         response.setMensagem("Cliente atualizado com sucesso");
         return response;
     }
+
 
 
 }
