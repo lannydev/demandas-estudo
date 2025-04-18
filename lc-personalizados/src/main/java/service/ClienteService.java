@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import repository.ClienteRepository;
 
+import java.util.List;
+
 @Service
 public class ClienteService {
 
@@ -59,6 +61,30 @@ public class ClienteService {
         response.setMensagem("Cliente atualizado com sucesso");
         return response;
     }
+
+    public List<Cliente> listarTodosClientes() {
+        return repository.findAll();
+    }
+
+    public Cliente buscarPorCpf(String cpf) {
+        return repository.findByCpf(cpf).orElse(null);
+    }
+
+    public ClienteResponseDTO deletarCliente(Long id) {
+        ClienteResponseDTO response = new ClienteResponseDTO();
+
+        if (!repository.existsById(id)) {
+            response.setHttpStatus(HttpStatus.NOT_FOUND);
+            response.setMensagem("Cliente não cadastrado.");
+            return response;
+        }
+
+        repository.deleteById(id);
+        response.setHttpStatus(HttpStatus.OK);
+        response.setMensagem("Cliente deletado com sucesso.");
+        return response;
+    }
+
 
 
 
